@@ -44,18 +44,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
           tableView.deselectRow(at: indexPath, animated: true)
             
           let item = data[indexPath.row]
-
-          guard let vc = storyboard?.instantiateViewController(identifier: "edit") as? EditViewController else {
-             return
-          }
-
-         vc.itemId = item.id
-         vc.editingHandler = { [weak self] in self?.refresh()}
-         vc.navigationItem.largeTitleDisplayMode = .never
-         vc.title = item.item
-         navigationController?.pushViewController(vc, animated: true)
+          self.performSegue(withIdentifier: "edit", sender: item)
 
       }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+        if segue.identifier == "edit", let vc = segue.destination as? EditViewController, let item = sender as? ToDoListItem {
+            vc.itemId = item.id
+            vc.editingHandler = { [weak self] in self?.refresh()}
+            vc.navigationItem.largeTitleDisplayMode = .never
+            vc.title = item.item
+            }
+        else if segue.identifier == "add", let vc = segue.destination as? AddViewController {
+            vc.completionHandler = { [weak self] in
+                self?.refresh()
+            }
+            vc.title = "New Item"
+            vc.navigationItem.largeTitleDisplayMode = .never
+        }
+        
+    }
+
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
             if editingStyle == .delete {
                 let item = data[indexPath.row]
@@ -68,18 +79,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
             }
     }
-    
-    @IBAction func didTapAddButton() {
-           guard let vc = storyboard?.instantiateViewController(identifier: "add") as? AddViewController else {
-               return
-           }
-           vc.completionHandler = { [weak self] in
-               self?.refresh()
-           }
-           vc.title = "New Item"
-           vc.navigationItem.largeTitleDisplayMode = .never
-           navigationController?.pushViewController(vc, animated: true)
-       }
+
 
     func refresh() {
         data = realm.objects(ToDoListItem.self).map({ $0 })

@@ -41,8 +41,5 @@ class EditViewController: UIViewController {
             editingHandler?()
             navigationController?.popToRootViewController(animated: true)
         }
-       else {
-            print("Add something")
-            }
     }
 }

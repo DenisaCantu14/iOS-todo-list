@@ -39,9 +39,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             completionHandler?()
             navigationController?.popToRootViewController(animated: true)
                 }
-                else {
-                    print("Add something")
-                }
+               
     }
           
 
